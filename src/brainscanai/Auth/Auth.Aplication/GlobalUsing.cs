@@ -1,0 +1,9 @@
+﻿global using FluentValidation.Results;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Reflection;
+global using Auth.Aplication.Common.Interface;
+global using BuildingBlocks.CQRS;
+global using MediatR;
+global using FluentValidation;
+global using Auth.Aplication.Dtos;

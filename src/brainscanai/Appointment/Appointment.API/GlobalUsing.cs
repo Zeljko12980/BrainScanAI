@@ -1,0 +1,9 @@
+﻿global using Appointment.Application;
+global using Appointment.Infrastructure;
+global using Carter;
+global using Appointment.Infrastructure.Persistence;
+global using Microsoft.EntityFrameworkCore;
+global using Appointment.Application.Command;
+global using MediatR;
+global using Appointment.Application.Common.Dtos;
+global using Appointment.Application.Query;

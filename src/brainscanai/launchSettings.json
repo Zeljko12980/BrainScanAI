@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "auth.api": "StartDebugging",
+        "patient.api": "StartDebugging",
+        "yarp.gateway": "StartDebugging",
+        "appointment.api": "StartDebugging",
+        "notification.api": "StartDebugging",
+        "doctor.api": "StartDebugging"
+      }
+    }
+  }
+}

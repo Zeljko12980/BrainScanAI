@@ -23,6 +23,7 @@
                 });
             });
 
+            services.AddMassTransitHostedService();
             return services;
         }
     }

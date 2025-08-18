@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>BrainScanAI - Two-Factor Code</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 600px;
+            margin: 20px auto;
+            overflow: hidden;
+            border: 1px solid #e0e6ed;
+        }
+
+        .header {
+            background-color: #2a5c8d;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border-bottom: 4px solid #1a456e;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .tagline {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .code-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .code {
+            display: inline-block;
+            font-size: 36px;
+            font-weight: 700;
+            color: #2a5c8d;
+            letter-spacing: 5px;
+            padding: 15px 25px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            border: 1px dashed #2a5c8d;
+        }
+
+        .highlight {
+            color: #2a5c8d;
+            font-weight: 600;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .footer {
+            background-color: #f5f7fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #7f8c8d;
+            border-top: 1px solid #e0e6ed;
+        }
+
+        .security-note {
+            font-size: 13px;
+            color: #e74c3c;
+            font-weight: 500;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fef5f5;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">BrainScanAI</div>
+            <div class="tagline">Advanced Brain Carcinoma Detection System</div>
+        </div>
+
+        <div class="content">
+            <p>Dear <span class="highlight">@Model.FullName</span>,</p>
+
+            <p>To access your BrainScanAI account, please use the following verification code:</p>
+
+            <div class="code-container">
+                <div class="code">@Model.Code</div>
+            </div>
+
+            <p>This security code will expire in <strong>10 minutes</strong>.</p>
+
+            <div class="security-note">
+                <strong>Security Notice:</strong> Never share this code with anyone. BrainScanAI will never ask you for your verification code.
+            </div>
+
+            <div class="note">
+                If you didn't request this code, please secure your account by changing your password immediately.
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; @DateTime.Now.Year BrainScanAI - Advanced Neuroimaging Diagnostics. All rights reserved.<br>
+            <small>This email was sent automatically. Please do not reply.</small>
+        </div>
+    </div>
+</body>
+</html>

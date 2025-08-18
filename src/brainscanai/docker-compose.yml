@@ -1,0 +1,69 @@
+services:
+
+  authdb:
+    image: postgres
+
+  patientdb:
+    image: postgres
+
+  appointmentdb:
+    image: postgres
+
+  notificationdb:
+    image: postgres
+
+  messagebroker:
+    image: rabbitmq:management
+
+  doctordb:
+    image: postgres
+
+ 
+
+  auth.api:
+    image: ${DOCKER_REGISTRY-}authapi
+    build:
+      context: .
+      dockerfile: Auth/Auth.API/Dockerfile
+
+  patient.api:
+    image: ${DOCKER_REGISTRY-}patientapi
+    build:
+      context: .
+      dockerfile: Patient/Patient.API/Dockerfile
+
+  appointment.api:
+    image: ${DOCKER_REGISTRY-}appointmentapi
+    build:
+      context: .
+      dockerfile: Appointment/Appointment.API/Dockerfile
+  
+  notification.api:
+    image: ${DOCKER_REGISTRY-}notificationapi
+    build:
+      context: .
+      dockerfile: Notification/Notification.API/Dockerfile
+
+  doctor.api:
+    image: ${DOCKER_REGISTRY-}doctorapi
+    build:
+      context: .
+      dockerfile: Doctor/Doctor.API/Dockerfile
+
+
+
+  yarp.gateway:
+    image: ${DOCKER_REGISTRY-}yarpgateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Yarp.Gateway/Dockerfile
+
+
+
+
+
+
+
+
+ 
+

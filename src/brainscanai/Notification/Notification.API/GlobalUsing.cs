@@ -1,0 +1,11 @@
+﻿global using Carter;
+global using Notification.Application;
+global using Notification.Infrastructure;
+global using Notification.Infrastructure.Persistence;
+global using Microsoft.EntityFrameworkCore;
+global using MediatR;
+global using Notification.Application.Command;
+global using Notification.Application.Dtos;
+global using FluentValidation;
+global using Microsoft.AspNetCore.Mvc;
+global using System.ComponentModel.DataAnnotations;

@@ -1,0 +1,208 @@
+version: "3.9"
+
+services:
+
+
+  authdb:
+    container_name: authdb
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: AuthDb
+    ports:
+      - "5432:5432"
+
+  appointmentdb:
+    container_name: appointmentdb
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: AppointmentDb
+    ports:
+      - "5434:5432"
+
+  patientdb:
+    container_name: patientdb
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: PatientDb
+    ports:
+      - "5433:5432"
+
+  notificationdb:
+    container_name: notificationdb
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: NotificationDb
+    ports:
+      - "5435:5432"
+   
+  doctordb:
+    container_name: doctordb
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: DoctorDb
+    ports:
+      - "5436:5432"
+  messagebroker:
+    container_name: messagebroker
+    image: rabbitmq:3-management
+    hostname: ecommerce-mq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
+
+
+  auth.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081
+      ConnectionStrings__DefaultConnection: Server=authdb;Port=5432;Database=AuthDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      MessageBroker__Host: amqp://ecommerce-mq:5672
+      MessageBroker__UserName: guest
+      MessageBroker__Password: guest
+    depends_on:
+      - authdb
+      - messagebroker
+    ports:
+      - "6000:8080"
+      - "6060:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  
+  patient.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081
+      ConnectionStrings__DefaultConnection: Server=patientdb;Port=5432;Database=PatientDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      MessageBroker__Host: amqp://ecommerce-mq:5672
+      MessageBroker__UserName: guest
+      MessageBroker__Password: guest
+    depends_on:
+      - patientdb
+      - messagebroker
+    ports:
+      - "6001:8080"
+      - "6061:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+
+  appointment.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081 
+      ConnectionStrings__DefaultConnection: Server=appointmentdb;Port=5432;Database=AppointmentDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      MessageBroker__Host: amqp://ecommerce-mq:5672
+      MessageBroker__UserName: guest
+      MessageBroker__Password: guest
+    depends_on:
+      - appointmentdb
+      - messagebroker
+    ports:
+      - "6003:8080"
+      - "6063:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+
+
+  notification.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081 
+      ConnectionStrings__DefaultConnection: Server=notificationdb;Port=5432;Database=NotificationDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      MessageBroker__Host: amqp://ecommerce-mq:5672
+      MessageBroker__UserName: guest
+      MessageBroker__Password: guest
+    depends_on:
+      - notificationdb
+      - messagebroker
+    ports:
+      - "6005:8080"
+      - "6065:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
+      
+      
+  
+  doctor.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081 
+      ConnectionStrings__DefaultConnection: Server=doctordb;Port=5432;Database=DoctorDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      MessageBroker__Host: amqp://ecommerce-mq:5672
+      MessageBroker__UserName: guest
+      MessageBroker__Password: guest
+      GrpcSettings__BrainTumorAnalyzerAddress: "http://192.168.0.13:50051"
+    ports:
+      - "6006:8080"
+      - "6066:8081" 
+    depends_on:
+      - doctordb
+      - messagebroker
+  
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro 
+
+
+  yarp.gateway:
+  
+
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    depends_on:
+      - auth.api
+      - patient.api
+      - appointment.api
+    ports:
+      - "6004:8080"
+      - "6064:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+
+
+  
+

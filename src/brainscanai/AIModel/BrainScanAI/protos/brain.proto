@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package brain;
+
+service BrainTumorAnalyzer {
+  rpc Predict (TumorImageRequest) returns (TumorPredictionResponse);
+}
+
+message TumorImageRequest {
+  string image = 1;
+}
+
+message TumorPredictionResponse {
+  string tumor_type = 1;
+  double confidence = 2;
+}
