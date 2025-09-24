@@ -48,6 +48,7 @@ if (app.Environment.IsDevelopment())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<PatientDbContext>();
         dbContext.Database.Migrate();
+        await PatientSeed.SeedAsync(dbContext);
     }
 }
 

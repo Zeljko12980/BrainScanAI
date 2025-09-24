@@ -1,3 +1,5 @@
+using Appointment.Infrastructure.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -14,10 +16,12 @@ if (app.Environment.IsDevelopment())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppointmentDbContext>();
         dbContext.Database.Migrate();
+        AppointmentSeed.Initialize(dbContext);
     }
 }
 
 app.MapCarter();
+app.MapHub<AppointmentHub>("/hubs/appointments");
 
 app.Run();
 

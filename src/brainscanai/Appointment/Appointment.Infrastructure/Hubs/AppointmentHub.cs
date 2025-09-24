@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Notification.Domain.Entities;
 
-namespace Notification.Infrastructure.Hubs
+namespace Appointment.Infrastructure.Hubs
 {
     [AllowAnonymous]
-    public class NotificationHub : Hub
+    public class AppointmentHub : Hub
     {
         public static readonly Dictionary<string, string> Connections = new();
 
@@ -19,7 +18,6 @@ namespace Notification.Infrastructure.Hubs
         {
             Console.WriteLine($"Disconnected: {Context.ConnectionId}");
 
-           
             var user = Connections.FirstOrDefault(x => x.Value == Context.ConnectionId);
             if (!string.IsNullOrEmpty(user.Key))
             {
@@ -30,7 +28,6 @@ namespace Notification.Infrastructure.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-       
         public Task RegisterUserAsync(string userId)
         {
             Connections[userId] = Context.ConnectionId;
@@ -38,17 +35,13 @@ namespace Notification.Infrastructure.Hubs
             return Task.CompletedTask;
         }
 
-       
-        public async Task SendToUserAsync(string userId, Notification.Domain.Entities.Notification notification)
+        public async Task SendToUserAsync(string userId, AppointmentDto appointment)
         {
             if (Connections.TryGetValue(userId, out var connectionId))
             {
                 await Clients.Client(connectionId)
-                    .SendAsync("ReceiveNotification", notification);
+                    .SendAsync("ReceiveAppointment", appointment);
             }
         }
-
-    
- 
     }
 }

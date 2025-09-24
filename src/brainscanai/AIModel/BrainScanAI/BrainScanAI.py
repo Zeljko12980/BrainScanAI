@@ -51,7 +51,7 @@ def serve():
     brain_pb2_grpc.add_BrainTumorAnalyzerServicer_to_server(
         BrainTumorAnalyzerServicer(), server
     )
-    server.add_insecure_port('192.168.0.13:50051')
+    server.add_insecure_port('192.168.100.34:50051')
 
     print("✅ gRPC server pokrenut na portu 50051...")
     server.start()

@@ -11,6 +11,7 @@
 
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddAutoMapper(typeof(MappingProfile.MappingProfile).Assembly);
+            services.AddSignalR();
             return services;
         }
     }

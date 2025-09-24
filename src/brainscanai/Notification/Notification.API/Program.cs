@@ -1,19 +1,17 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
-using Notification.Infrastructure;
 using Notification.Infrastructure.Hubs;
-using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Dodavanje servisa slojeva
+// Dodavanje servisa
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddCarter();
 
-// Dodavanje autentifikacije sa JWT
+// JWT autentifikacija
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -29,10 +27,11 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 
-    // Omogu?ava da SignalR uzme token iz query stringa "access_token"
+    // Omogućava SignalR-u da pročita token iz query stringa "access_token"
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -51,37 +50,30 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Registruj custom provider koji koristi JWT claim za UserId
+// SignalR UserId provider koji uzima UserId iz JWT claim-a
 builder.Services.AddSingleton<IUserIdProvider, JwtUserIdProvider>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-        dbContext.Database.Migrate();
-    }
-}
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+    db.Database.Migrate();
+    await NotificationSeed.Initialize(db);
+}
 app.MapCarter();
-
 app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
 
-
-// Custom IUserIdProvider koji uzima UserId iz JWT tokena (ClaimTypes.NameIdentifier)
 public class JwtUserIdProvider : IUserIdProvider
 {
     public string? GetUserId(HubConnectionContext connection)
     {
-        return connection.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        // Ovo osigurava da signalR koristi claim "UserId" iz JWT-a
+        return connection.User?.FindFirst("UserId")?.Value;
     }
 }

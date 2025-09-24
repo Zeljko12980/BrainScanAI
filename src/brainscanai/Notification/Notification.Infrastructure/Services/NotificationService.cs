@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Notification.Infrastructure.Hubs;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Notification.Infrastructure.Services
 {
@@ -57,9 +58,15 @@ namespace Notification.Infrastructure.Services
 
             context.Notifications.Add(notification);
             await context.SaveChangesAsync();
+;
 
-            await hubContext.Clients.User(notification.UserId)
-                .SendAsync("ReceiveNotification", notification);
+            if (NotificationHub.Connections.TryGetValue(notification.UserId, out var connectionId))
+            {
+                await hubContext.Clients.Client(connectionId)
+                    .SendAsync("ReceiveNotification", notification);
+            }
+
+
 
             return mapper.Map<NotificationDto>(notification);
         }

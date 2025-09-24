@@ -1,10 +1,13 @@
 ﻿using Appointment.Domain.Enums;
+using Appointment.Infrastructure.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Xml;
 
 namespace Appointment.Infrastructure.Services
 {
     public class AppointmentService
-        (AppointmentDbContext context,IMapper mapper)
+        (AppointmentDbContext context,IMapper mapper, IHubContext<AppointmentHub> hubContext)
         : IAppointmentService
     {
         public async Task<AppointmentDto> ScheduleAppointment(
@@ -41,7 +44,13 @@ namespace Appointment.Infrastructure.Services
             context.Appointments.Add(appointment);
             await context.SaveChangesAsync();
 
-            return mapper.Map<AppointmentDto>(appointment);
+            var dto= mapper.Map<AppointmentDto>(appointment); 
+            await hubContext.Clients.Client(appointment.PatientId.ToString())
+                   .SendAsync("AppointmentRescheduled", dto);
+            await hubContext.Clients.Client(appointment.DoctorId.ToString())
+                .SendAsync("AppointmentRescheduled", dto);
+
+            return dto;
         }
 
         public async Task<bool> RescheduleAppointment(Guid appointmentId, DateTime newAppointmentTime)
